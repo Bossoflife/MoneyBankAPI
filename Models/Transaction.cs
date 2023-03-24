@@ -10,6 +10,7 @@ namespace MoneyBankAPI.Models
     {
         [Key]
         public int Id { get; set; }
+
         public string? TransactionUniqueReference { get; set; }
         public string? TransactionAmount { get; set; }
         public TranStatus TransactionStatus { get; set; }
@@ -22,7 +23,7 @@ namespace MoneyBankAPI.Models
 
         public Transaction()
         {
-            TransactionUniqueReference = $"{Guid.NewGuid().ToString().Replace("-","").Substring(1 ,27)}";  
+            TransactionUniqueReference = $"{Guid.NewGuid().ToString().Replace("-", "").Substring(1, 27)}";
         }
     }
     public enum TranStatus

@@ -4,6 +4,7 @@ namespace MoneyBankAPI.Service.Interface
 {
     public interface IAccountService
     {
+        //the Interface performce all Crud IAccountService Methods......
         Account Authenticate(string AccountNumber, string Pin);
         IEnumerable<Account> GetAllAccount();
         Account Create(Account account, string Pin, string ConfirmPin);

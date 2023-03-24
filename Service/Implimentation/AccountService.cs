@@ -7,6 +7,7 @@ using System.Text;
 
 namespace MoneyBankAPI.Service.Implimentation
 {
+    //Now the contract is Inherited in The Implemetation with a Handshake from the IEnumerable GetAllAcounts to ToList 
     public class AccountService : IAccountService
     {
         private readonly MoneyBankDbContext _dbContext;
@@ -15,10 +16,11 @@ namespace MoneyBankAPI.Service.Implimentation
         {
             _dbContext = dbContext;
         }
-        public Account Authenticate(string AccountNumber, string Pin)
+        public Account? Authenticate(string AccountNumber, string Pin)
         {
-            // let's make authenticate
-            // dose account exist for that number 
+            // let's make authenticatition
+            // we will Genrate the AccountNumber if the Number has been used already
+            // dose account exist for that number   ? if it's not account == null
             var account = _dbContext.Accounts.Where(x => x.AccountNumberGenerated == AccountNumber).SingleOrDefault();
             if (account == null)
                 return null;
@@ -26,8 +28,9 @@ namespace MoneyBankAPI.Service.Implimentation
 
             //verify pinHash
             if (!VerifyPinHash(Pin, account.PinHash, account.PinSalt))
+            {
                 return null;
-
+            }
             //Ok so Aunthentication is passed here
             return account;
         }
@@ -162,13 +165,15 @@ namespace MoneyBankAPI.Service.Implimentation
             if (!string.IsNullOrWhiteSpace(Pin))
             {
                 //this means the user wishes to change his/her Pin
-                byte[] pinHash, pinSalt;
-                CreatePinHash(Pin, out pinHash, out pinSalt);
+                CreatePinHash(Pin, out byte[] pinHash, out byte[] pinSalt);
 
                 accountToUpdated.PinHash = pinHash;
                 accountToUpdated.PinSalt = pinSalt;
             }
-
+            accountToUpdated.DateLastUpated = DateTime.Now;
+            // now let's save the changes of the Updated user
+            _dbContext.Accounts.Update(accountToUpdated);
+            _dbContext.SaveChanges();
         }
 
 
