@@ -5,6 +5,8 @@ using MoneyBankAPI.Models;
 using MoneyBankAPI.Service.Implimentation;
 using MoneyBankAPI.Service.Interface;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace MoneyBankAPI.Controllers
 {
@@ -54,7 +56,16 @@ namespace MoneyBankAPI.Controllers
 
             // it will return account... let's see when we run before we know whether to map it
         }
+        [HttpGet]
+        [Route("get_by_account_number")]
+        public IActionResult GetByAccountNumber(string AccountNumber)
+        {
+            if (!Regex.IsMatch(AccountNumber, @"^[0][1-9]\d{10}$|^{1-9}\d{9}$")) return BadRequest("Account Number most not be more than 10-digits");
 
+            var account = _accountService.GetByAccountNumber(AccountNumber);
+            GetAccountModel cleanedAccount = _mapper.Map<GetAccountModel>(account);
+            return Ok(cleanedAccount);
+        }
     }
 
-}
+} 
