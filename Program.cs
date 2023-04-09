@@ -11,7 +11,7 @@ builder.Services.AddDbContext<MoneyBankDbContext>(options => options.UseSqlServe
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-//builder.Services.Configure<Appsettings>(builder.Configuration.GetSection("AppSettings"));
+builder.Services.Configure<Appsettings>(builder.Configuration.GetSection("AppSettings"));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

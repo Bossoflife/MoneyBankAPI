@@ -64,6 +64,7 @@ namespace MoneyBankAPI.Service.Implimentation
                 sourceAccount = _accountService.GetByAccountNumber(_ourBankSettlementAccount);
                 destinationAccount = _accountService.GetByAccountNumber(AccountNumber);
 
+                //now let's update the account balance
                 sourceAccount.CurrentAccountBalance -= Amount;
                 destinationAccount.CurrentAccountBalance += Amount;
 
@@ -79,9 +80,9 @@ namespace MoneyBankAPI.Service.Implimentation
                 }
                 else
                 {
-                    transaction.TransactionStatus = TranStatus.Success;
+                    transaction.TransactionStatus = TranStatus.Failed;
                     response.ResponseCode = "02";
-                    response.ResponseMessage = "Transaction successful";
+                    response.ResponseMessage = "Transaction Failed";
                     response.Data = null;
                 }
             }
@@ -141,9 +142,9 @@ namespace MoneyBankAPI.Service.Implimentation
                 }
                 else
                 {
-                    transaction.TransactionStatus = TranStatus.Success;
+                    transaction.TransactionStatus = TranStatus.Failed;
                     response.ResponseCode = "02";
-                    response.ResponseMessage = "Transaction successful";
+                    response.ResponseMessage = "Transaction Failed!";
                     response.Data = null;
                 }
             }
@@ -204,7 +205,7 @@ namespace MoneyBankAPI.Service.Implimentation
                 }
                 else
                 {
-                    transaction.TransactionStatus = TranStatus.Success;
+                    transaction.TransactionStatus = TranStatus.Failed;
                     response.ResponseCode = "02";
                     response.ResponseMessage = "Transaction successful";
                     response.Data = null;
