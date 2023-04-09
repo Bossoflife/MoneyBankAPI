@@ -12,7 +12,7 @@ namespace MoneyBankAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountsController : ControllerBase
+    public partial class AccountsController : ControllerBase
     {
         private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
@@ -26,7 +26,7 @@ namespace MoneyBankAPI.Controllers
         }
         // RegisterNewAccount
         [HttpPost]
-        [Route("register_new_accout")]
+        [Route("register_new_account")]
         public IActionResult ResgisterNewAcount([FromBody] RegisterNewAccountModel newAccount)
         {
             if (!ModelState.IsValid) return BadRequest(newAccount);
@@ -39,11 +39,11 @@ namespace MoneyBankAPI.Controllers
         //GetAllAccount
         [HttpGet]
         [Route("get_all_accout")]
-        public IAccountService GetAllAccounts()
+        public IActionResult GetAllAccounts()
         {
             var accounts = _accountService.GetAllAccount();
             var cleanedAccounts = _mapper.Map<IList<GetAccountModel>>(accounts);
-            return (IAccountService)Ok(cleanedAccounts);
+            return Ok(cleanedAccounts);
         }
         [HttpPost]
         [Route("authenticate")]
@@ -56,16 +56,43 @@ namespace MoneyBankAPI.Controllers
 
             // it will return account... let's see when we run before we know whether to map it
         }
-        [HttpGet]
-        [Route("get_by_account_number")]
+        [HttpDelete]
+        [Route("Remove_by_account_number")]
         public IActionResult GetByAccountNumber(string AccountNumber)
         {
-            if (!Regex.IsMatch(AccountNumber, @"^[0][1-9]\d{10}$|^{1-9}\d{9}$")) return BadRequest("Account Number most not be more than 10-digits");
-
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Account Number most not be more than 10-digits");
+            }
             var account = _accountService.GetByAccountNumber(AccountNumber);
-            GetAccountModel cleanedAccount = _mapper.Map<GetAccountModel>(account);
+            var cleanedAccount = _mapper.Map<GetAccountModel>(account);
             return Ok(cleanedAccount);
         }
+        [HttpGet]
+        [Route("get_account_By_Id")]
+        public IActionResult GetByAccountById(int Id)
+        {
+            var account = _accountService.GetById(Id);
+            var cleanedAccount = _mapper.Map<GetAccountModel>(account);
+            return Ok(cleanedAccount);
+        }
+        [HttpPost]
+        [Route("update_account")]
+        public IActionResult UpdateAccount([FromBody] UpdateAccountModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var account = _mapper.Map<Account>(model);
+
+            _accountService.Update(account);
+            return Ok();
+        }
+
+
     }
 
-} 
+}
+
+

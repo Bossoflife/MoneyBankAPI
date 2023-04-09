@@ -13,6 +13,7 @@ namespace MoneyBankAPI.Profiles
 
             CreateMap<Account, GetAccountModel>();
             // We will create these dto classes
+            CreateMap<Account, TransactionRequestDto>();
         }
     }
 }

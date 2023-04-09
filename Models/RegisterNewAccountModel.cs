@@ -14,11 +14,10 @@ namespace MoneyBankAPI.Models
         public DateTime DateLastUpated { get; set; }
         //let's add regular expression
         [Required]
-        [RegularExpression(@"^[0-9]\d{4}$", ErrorMessage = "Pin must not be more that 4 digits")] //it shoud be 4-digits string
-        public string? Pin { get; set; }
+        public string Pin { get; set; }
         [Required]
         [Compare("Pin", ErrorMessage = "Pin do not match")]
-        public string? ConfirmPin { get; set; } // we want to compare both of them
+        public string ConfirmPin { get; set; } // we want to compare both of them
 
     }
 }

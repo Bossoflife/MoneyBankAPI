@@ -38,7 +38,7 @@ namespace MoneyBankAPI.Service.Implimentation
         {
             if (string.IsNullOrWhiteSpace(Pin)) throw new ArgumentNullException(nameof(Pin));
             //now let's verify pin
-            using (var hmac = new System.Security.Cryptography.HMACSHA512(pinSalt))
+            using (var hmac = new HMACSHA512(pinSalt))
             {
                 var computedPinHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(Pin));
                 for (int i = 0; i < computedPinHash.Length; i++)
@@ -52,7 +52,7 @@ namespace MoneyBankAPI.Service.Implimentation
         public Account Create(Account account, string Pin, string ConfirmPin)
         {
             // this is to create a new account
-            if (_dbContext.Accounts.Any(x => x.Email == account.Email)) throw new ApplicationException("An account already exist with this email");
+            if (_dbContext.Accounts.Any(x => x.Email == account.Email)) throw new ArgumentException("An account already exist with this email");
             // this is to validate the email
 
             // this is to confirmPin with the already existing Pin of the account
@@ -76,11 +76,9 @@ namespace MoneyBankAPI.Service.Implimentation
         }
         public static void CreatePinHash(string pin, out byte[] pinHash, out byte[] pinSalt)
         {
-            using (var hmac = new System.Security.Cryptography.HMACSHA512())
-            {
-                pinSalt = hmac.Key;
-                pinHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(pin));
-            }
+            using var hmac = new HMACSHA512();
+            pinSalt = hmac.Key;
+            pinHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(pin));
         }
 
         public void Delete(int Id)
@@ -98,7 +96,7 @@ namespace MoneyBankAPI.Service.Implimentation
             return _dbContext.Accounts.ToList();
         }
 
-        public Account GetByAccountNumber(string AccountNumber)
+        public Account? GetByAccountNumber(string AccountNumber)
         {
             var account = _dbContext.Accounts.Where(x => x.AccountNumberGenerated == AccountNumber).FirstOrDefault();
             if (account == null)
@@ -108,7 +106,7 @@ namespace MoneyBankAPI.Service.Implimentation
             return account;
         }
 
-        public Account GetById(int Id)
+        public Account? GetById(int Id)
         {
             var account = _dbContext.Accounts.Where(x => x.Id == Id).FirstOrDefault();
             if (account == null)
@@ -123,21 +121,24 @@ namespace MoneyBankAPI.Service.Implimentation
             // Update is more tasky
 
             // actually we will allow th user to be able to change his Email, PhoneNumber and Pin 
-            var accountToUpdated = _dbContext.Accounts.Where(x => x.Email == account.Email).SingleOrDefault();
-            if (accountToUpdated == null) throw new ApplicationException("Account dose not exist please provide a vaild account");
+            var accountToUpdated = _dbContext.Accounts.Where(x => x.AccountName == account.AccountName).SingleOrDefault();
+            if (accountToUpdated == null)
+            {
+                throw new ArgumentException("Account dose not exist please provide a vaild account");
+            }
             // if the account exists, lrt's listen for user to change any of his properties 
-            if (!string.IsNullOrWhiteSpace(account.Email))
+            if (!string.IsNullOrWhiteSpace(account.AccountName))
             {
                 // this means the user has and account and wishes to change his/her email
                 //check if the one he has changed to is already taken
-                if (_dbContext.Accounts.Any(x => x.Email == account.Email))
+                if (_dbContext.Accounts.Any(x => x.AccountName == account.AccountName))
                 {
-                    throw new ApplicationException("this Email" + account.Email + "already taken");
+                    throw new ArgumentException("this AccountName" + account.AccountName + "already taken");
                 }
                 else
                 {
                     //else change email 
-                    accountToUpdated.Email = account.Email;
+                    accountToUpdated.Email = account.AccountName;
                 }
 
 

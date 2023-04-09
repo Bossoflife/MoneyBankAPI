@@ -9,7 +9,7 @@ namespace MoneyBankAPI.Models
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
         [Required]
-        [RegularExpression(@"^[0-9]/d{4}$", ErrorMessage = "Pin must not be more that 4 digits")] //it shoud be 4-digits string
+        [RegularExpression(@"^[0-9]{4}$", ErrorMessage = "Pin must not be more that 4 digits")] //it shoud be 4-digits string
         public string? Pin { get; set; }
         [Required]
         [Compare("Pin", ErrorMessage = "Pin do not match")]
